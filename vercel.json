@@ -1,0 +1,11 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"github": {
+		"silent": true
+	},
+	"rewrites": [
+		{ "source": "/thbcd/:name/:number", "destination": "/api/thbcd.go" },
+		{ "source": "/(.*)", "destination": "/api/redirect.go" }
+	],
+	"regions": ["sfo1"]
+}
