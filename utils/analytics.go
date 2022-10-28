@@ -23,10 +23,19 @@ type AnalyticEvent struct {
 }
 
 type AnalyticEventParams struct {
-	ContentType        string `json:"content_type"`
-	ItemId             string `json:"item_id"`
-	NonPersonalizedAds bool   `json:"non_personalized_ads"`
-	EngagementTimeMsec string `json:"engagement_time_msec"`
+	TransactionId      string              `json:"transaction_id"`
+	Currency           string              `json:"currency"`
+	Value              float32             `json:"value"`
+	Items              []AnalyticEventItem `json:"items"`
+	NonPersonalizedAds bool                `json:"non_personalized_ads"`
+	EngagementTimeMsec string              `json:"engagement_time_msec"`
+}
+
+type AnalyticEventItem struct {
+	ItemId   string  `json:"item_id"`
+	Currency string  `json:"currency"`
+	Value    float32 `json:"value"`
+	Quantity float32 `json:"quantity"`
 }
 
 var (
@@ -35,24 +44,37 @@ var (
 	measurementId = os.Getenv("GA_MEASUREMENT_ID")
 )
 
-func SendAnalytics(userId string, userAgent string, actionType string, slug string) {
+func SendAnalytics(userId string, userAgent string, value float32, slug string) {
 	endpoint := endpoint + "?api_secret=" + apiSecret + "&measurement_id=" + measurementId
 
+	id := uuid.New().String()
+
 	analyticData := AnalyticData{}
-	analyticData.ClientId = uuid.New().String()
+	analyticData.ClientId = id
 	analyticData.UserId = userId
+	analyticData.Events = make([]AnalyticEvent, 1)
 
 	analyticEvent := AnalyticEvent{
-		Name: "select_content",
+		Name: "purchase",
 		Params: AnalyticEventParams{
-			ContentType:        actionType,
-			ItemId:             slug,
+			TransactionId:      id,
+			Currency:           "CNY",
+			Value:              value,
+			Items:              make([]AnalyticEventItem, 1),
 			NonPersonalizedAds: true,
 			EngagementTimeMsec: "1",
 		},
 	}
 
-	analyticData.Events = append(analyticData.Events, analyticEvent)
+	analyticItem := AnalyticEventItem{
+		ItemId:   slug,
+		Currency: "CNY",
+		Value:    value,
+		Quantity: 1,
+	}
+
+	analyticData.Events[0] = analyticEvent
+	analyticEvent.Params.Items[0] = analyticItem
 
 	json, err := json.Marshal(analyticData)
 

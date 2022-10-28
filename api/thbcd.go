@@ -27,7 +27,7 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 	date := utils.GetDate()
 	header.Set("Last-Modified", date.Format(http.TimeFormat))
 
-	go utils.SendAnalytics(userId, userAgent, "thbcd", name+"#"+number)
+	go utils.SendAnalytics(userId, userAgent, 3.0, name+"#"+number)
 
 	target, err := url.ParseRequestURI(thbcdUrl)
 

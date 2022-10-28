@@ -24,14 +24,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	shortUrls := utils.GetShortUrls()
 	shortUrl, ok := shortUrls[slug]
 
-	var actionType string
+	var value float32
 	if ok {
-		actionType = "redirect"
+		value = 2.0
 	} else {
-		actionType = "orphan"
+		value = 1.0
 	}
 
-	go utils.SendAnalytics(userId, userAgent, actionType, slug)
+	go utils.SendAnalytics(userId, userAgent, value, slug)
 
 	if !ok {
 		http.NotFound(w, r)
