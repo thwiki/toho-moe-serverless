@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/google/uuid"
 )
 
 type AnalyticData struct {
@@ -21,29 +23,32 @@ type AnalyticEvent struct {
 }
 
 type AnalyticEventParams struct {
-	ContentType string `json:"content_type"`
-	ItemId      string `json:"item_id"`
+	ContentType        string `json:"content_type"`
+	ItemId             string `json:"item_id"`
+	NonPersonalizedAds bool   `json:"non_personalized_ads"`
+	EngagementTimeMsec string `json:"engagement_time_msec"`
 }
 
 var (
 	endpoint      = os.Getenv("GA_ENDPOINT")
 	apiSecret     = os.Getenv("GA_API_SECRET")
 	measurementId = os.Getenv("GA_MEASUREMENT_ID")
-	clientId      = os.Getenv("GA_CLIENT_ID")
 )
 
 func SendAnalytics(userId string, userAgent string, actionType string, slug string) {
 	endpoint := endpoint + "?api_secret=" + apiSecret + "&measurement_id=" + measurementId
 
 	analyticData := AnalyticData{}
-	analyticData.ClientId = clientId
+	analyticData.ClientId = uuid.New().String()
 	analyticData.UserId = userId
 
 	analyticEvent := AnalyticEvent{
 		Name: "select_content",
 		Params: AnalyticEventParams{
-			ContentType: actionType,
-			ItemId:      slug,
+			ContentType:        actionType,
+			ItemId:             slug,
+			NonPersonalizedAds: true,
+			EngagementTimeMsec: "1",
 		},
 	}
 
