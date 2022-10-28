@@ -1,6 +1,6 @@
 {
 	"name": "toho-moe-serverless",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "TohoMoe Short Url Service",
 	"type": "module",
 	"main": "dist/build.js",
@@ -8,7 +8,7 @@
 		"setup": "vercel login && vercel link",
 		"start": "vercel dev",
 		"deploy": "vercel deploy --prod",
-		"build2": "tsc && node dist/build.js",
+		"build": "tsc && node dist/build.js",
 		"dev": "npm run start",
 		"test": "go test ./api ./utils"
 	},
