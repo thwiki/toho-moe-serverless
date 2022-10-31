@@ -6,6 +6,7 @@ import (
 	"os"
 
 	utils "github.com/thwiki/toho-moe-serverless/utils"
+	"github.com/thwiki/toho-moe-serverless/vago"
 )
 
 var (
@@ -17,9 +18,6 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 	name := query.Get("name")
 	number := query.Get("number")
 
-	userId := utils.GetUserIP(r)
-	userAgent := r.Header.Get("User-Agent")
-
 	header := w.Header()
 	header.Set("Content-Type", "application/json; charset=utf-8")
 	header.Set("Cache-Control", "public, max-age=0, s-maxage=0, must-revalidate")
@@ -27,7 +25,8 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 	date := utils.GetDate()
 	header.Set("Last-Modified", date.Format(http.TimeFormat))
 
-	go utils.SendAnalytics(userId, userAgent, 3.0, name+"#"+number)
+	event := vago.FromRequest(r)
+	go vago.Send(&event)
 
 	target, err := url.ParseRequestURI(thbcdUrl)
 
