@@ -8,7 +8,7 @@
 		"setup": "vercel login && vercel link",
 		"start": "vercel dev",
 		"deploy": "vercel deploy --prod",
-		"build2": "tsc && node dist/build.js",
+		"build": "tsc && node dist/build.js",
 		"dev": "npm run start",
 		"test": "go test ./api ./utils"
 	},
