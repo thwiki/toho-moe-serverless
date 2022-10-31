@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -22,11 +23,28 @@ var Endpoint = "/va/view"
 
 func FromRequest(r *http.Request) VAEvent {
 	url := r.URL
+
 	host := url.Host
+
+	if host == "" {
+		host = r.Header.Get("Host")
+	}
+	if host == "" {
+		host = os.Getenv("VERCEL_URL")
+	}
+
 	scheme := url.Scheme
+
+	if scheme == "" {
+		scheme = "https"
+	}
+
 	userAgent := r.Header.Get("User-Agent")
 	referrer := r.Header.Get("Referer")
 	timestamp := time.Now().UnixMilli()
+
+	url.Host = host
+	url.Scheme = scheme
 
 	event := VAEvent{
 		Url:       url.String(),
