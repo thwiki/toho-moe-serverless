@@ -14,17 +14,21 @@ type VAEvent struct {
 	Url       string `json:"o"`
 	Timestamp int64  `json:"ts"`
 	Referrer  string `json:"r,omitempty"`
+	IP        string `json:"-"`
 	Scheme    string `json:"-"`
 	Host      string `json:"-"`
 	UserAgent string `json:"-"`
 }
 
 var (
-	VA_API = os.Getenv("VA_API")
+	VA_API  = os.Getenv("VA_API")
+	LOG_API = os.Getenv("LOG_API")
 )
 
 func FromRequest(r *http.Request) VAEvent {
 	url := r.URL
+
+	ip := getUserIP(r)
 
 	host := url.Host
 
@@ -51,6 +55,7 @@ func FromRequest(r *http.Request) VAEvent {
 	event := VAEvent{
 		Url:       url.String(),
 		Timestamp: timestamp,
+		IP:        ip,
 		Scheme:    scheme,
 		Host:      host,
 		UserAgent: userAgent,
@@ -76,6 +81,8 @@ func Send(event *VAEvent) (err error) {
 		return
 	}
 
+	req.Header.Set("X-Real-IP", event.IP)
+	req.Header.Set("X-Forwarded-For", event.IP)
 	req.Header.Set("User-Agent", event.UserAgent)
 	req.Header.Set("Content-Type", "application/json")
 
@@ -87,7 +94,35 @@ func Send(event *VAEvent) (err error) {
 	}
 
 	defer resp.Body.Close()
-	io.Copy(io.Discard, resp.Body)
+	log, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return
+	}
+
+	req2, err2 := http.NewRequest("POST", LOG_API, bytes.NewBuffer(log))
+
+	if err2 != nil {
+		return
+	}
+
+	req2.Header.Set("Content-Type", "application/json")
+
+	client2 := &http.Client{}
+	resp2, err := client2.Do(req2)
+
+	io.Copy(io.Discard, resp2.Body)
 
 	return
+}
+
+func getUserIP(r *http.Request) string {
+	IPAddress := r.Header.Get("X-Real-IP")
+	if IPAddress == "" {
+		IPAddress = r.Header.Get("X-Forwarded-For")
+	}
+	if IPAddress == "" {
+		IPAddress = r.RemoteAddr
+	}
+	return IPAddress
 }
