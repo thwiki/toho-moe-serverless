@@ -20,15 +20,10 @@ type VAEvent struct {
 	UserAgent string `json:"-"`
 }
 
-var (
-	VA_API  = os.Getenv("VA_API")
-	LOG_API = os.Getenv("LOG_API")
-)
-
 func FromRequest(r *http.Request) VAEvent {
 	url := r.URL
 
-	ip := getUserIP(r)
+	ip := r.Header.Get("X-Real-IP")
 
 	host := url.Host
 
@@ -75,7 +70,7 @@ func Send(event *VAEvent) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", VA_API, bytes.NewBuffer(json))
+	req, err := http.NewRequest("POST", os.Getenv("VA_API"), bytes.NewBuffer(json))
 
 	if err != nil {
 		return
@@ -94,35 +89,7 @@ func Send(event *VAEvent) (err error) {
 	}
 
 	defer resp.Body.Close()
-	log, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		return
-	}
-
-	req2, err2 := http.NewRequest("POST", LOG_API, bytes.NewBuffer(log))
-
-	if err2 != nil {
-		return
-	}
-
-	req2.Header.Set("Content-Type", "application/json")
-
-	client2 := &http.Client{}
-	resp2, err := client2.Do(req2)
-
-	io.Copy(io.Discard, resp2.Body)
+	io.Copy(io.Discard, resp.Body)
 
 	return
-}
-
-func getUserIP(r *http.Request) string {
-	IPAddress := r.Header.Get("X-Real-IP")
-	if IPAddress == "" {
-		IPAddress = r.Header.Get("X-Forwarded-For")
-	}
-	if IPAddress == "" {
-		IPAddress = r.RemoteAddr
-	}
-	return IPAddress
 }

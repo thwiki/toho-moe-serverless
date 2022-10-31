@@ -41,5 +41,9 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, target.String(), http.StatusFound)
 
+	if flusher, ok := w.(http.Flusher); ok {
+		flusher.Flush()
+	}
+
 	vago.Send(&event)
 }
