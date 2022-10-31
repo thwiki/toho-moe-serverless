@@ -24,7 +24,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	shortUrl, ok := shortUrls[slug]
 
 	event := vago.FromRequest(r)
-	go vago.Send(&event)
 
 	if !ok {
 		http.NotFound(w, r)
@@ -51,4 +50,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	target.RawQuery = targetQuery.Encode()
 
 	http.Redirect(w, r, target.String(), http.StatusFound)
+
+	vago.Send(&event)
 }

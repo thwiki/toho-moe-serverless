@@ -26,7 +26,6 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 	header.Set("Last-Modified", date.Format(http.TimeFormat))
 
 	event := vago.FromRequest(r)
-	go vago.Send(&event)
 
 	target, err := url.ParseRequestURI(thbcdUrl)
 
@@ -41,4 +40,6 @@ func THBCD(w http.ResponseWriter, r *http.Request) {
 	target.RawQuery = targetQuery.Encode()
 
 	http.Redirect(w, r, target.String(), http.StatusFound)
+
+	vago.Send(&event)
 }
