@@ -19,7 +19,9 @@ type VAEvent struct {
 	UserAgent string `json:"-"`
 }
 
-var Endpoint = "/va/view"
+var (
+	VA_API = os.Getenv("VA_API")
+)
 
 func FromRequest(r *http.Request) VAEvent {
 	url := r.URL
@@ -62,15 +64,13 @@ func FromRequest(r *http.Request) VAEvent {
 }
 
 func Send(event *VAEvent) (err error) {
-	endpoint := event.Scheme + "://" + event.Host + Endpoint
-
 	json, err := json.Marshal(event)
 
 	if err != nil {
 		return
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(json))
+	req, err := http.NewRequest("POST", VA_API, bytes.NewBuffer(json))
 
 	if err != nil {
 		return

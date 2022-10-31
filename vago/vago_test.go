@@ -2,7 +2,6 @@ package vago
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -72,20 +71,20 @@ func TestFromRequestReferrerAbsent(t *testing.T) {
 	assert.Equal(t, `{"o":"https://example.com/test?param=abc","ts":1589327421000}`, string(json))
 }
 
-func TestSend(t *testing.T) {
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := io.ReadAll(r.Body)
-		assert.NotEmpty(t, string(body))
-		assert.Equal(t, Endpoint, r.URL.Path)
-	}))
-	defer svr.Close()
-
-	req := createRequest(svr.URL+"/test?param=abc", "https://www.google.com/search", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	event := FromRequest(req)
-	fixTime(&event)
-
-	assert.Equal(t, svr.URL+Endpoint, event.Scheme+"://"+event.Host+Endpoint)
-
-	err := Send(&event)
-	assert.NoError(t, err)
-}
+//func TestSend(t *testing.T) {
+//	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//		body, _ := io.ReadAll(r.Body)
+//		assert.NotEmpty(t, string(body))
+//		assert.Equal(t, Endpoint, r.URL.Path)
+//	}))
+//	defer svr.Close()
+//
+//	req := createRequest(svr.URL+"/test?param=abc", "https://www.google.com/search", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+//	event := FromRequest(req)
+//	fixTime(&event)
+//
+//	assert.Equal(t, svr.URL+Endpoint, event.Scheme+"://"+event.Host+Endpoint)
+//
+//	err := Send(&event)
+//	assert.NoError(t, err)
+//}
