@@ -7,5 +7,5 @@
 		{ "source": "/thbcd/:name/:number", "destination": "/api/thbcd.go" },
 		{ "source": "/((?!va/).*)", "destination": "/api/redirect.go" }
 	],
-	"regions": ["sfo1"]
+	"regions": ["hkg1"]
 }

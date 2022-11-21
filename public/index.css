@@ -1,0 +1,69 @@
+* {
+	box-sizing: inherit;
+}
+html,
+body {
+	font-family: sans-serif;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	-ms-overflow-style: scrollbar;
+	-webkit-tap-highlight-color: transparent;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	min-width: 400px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+main {
+	display: grid;
+	place-items: center;
+	height: 100%;
+	width: 100%;
+	background-image: url(./background.svg);
+	background-position: center;
+	background-size: cover;
+}
+section {
+	text-align: center;
+}
+h1 {
+	font-size: 3rem;
+	margin: 0.25rem 0;
+	color: rgba(255, 255, 255, 0.9);
+}
+h2 {
+	font-size: 2rem;
+	margin: 0.25rem 0;
+	color: rgba(255, 255, 255, 0.8);
+}
+hr {
+	margin: 1rem -2rem;
+	border-color: rgba(255, 255, 255, 0.5);
+}
+cite {
+	display: block;
+	font-size: 1rem;
+	font-style: normal;
+	margin: 0.5rem 0;
+	color: rgba(0, 0, 0, 0.8);
+}
+p {
+	max-width: 45ch;
+	padding: 1rem;
+	line-height: 1.5;
+	background-color: rgba(255, 255, 255, 0.15);
+	border: 2px solid rgba(255, 255, 255, 0.5);
+	border-radius: 0.5rem;
+}
+a {
+	color: inherit;
+}
+footer {
+	position: absolute;
+	bottom: 0.5rem;
+	width: 100%;
+	text-align: center;
+	color: rgba(0, 0, 0, 0.8);
+}
